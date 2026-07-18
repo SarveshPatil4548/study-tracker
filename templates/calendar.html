@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Header -->
+<div class="flex items-center justify-between anim-fade-in">
+    <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-500/15 flex items-center justify-center">
+            <svg class="w-5 h-5 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Calendar</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-0.5">Your monthly study activity at a glance.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Month Summary -->
+<div class="grid grid-cols-3 gap-4 mt-6">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-5 hover:shadow-lg transition-all duration-200 anim-slide-up">
+        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Days Studied</p>
+        <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ days_studied }}<span class="text-base font-medium text-gray-400 dark:text-gray-500 ml-1">/ {{ days_in_month }}</span></p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-5 hover:shadow-lg transition-all duration-200 anim-slide-up">
+        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Total Time</p>
+        <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ total_minutes|format_duration }}</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-5 hover:shadow-lg transition-all duration-200 anim-slide-up">
+        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Daily Average</p>
+        {% if days_studied > 0 %}
+            <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ (total_minutes // days_studied)|format_duration }}</p>
+        {% else %}
+            <p class="text-3xl font-bold text-gray-400 dark:text-gray-500">—</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Heatmap Card -->
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden mt-6 hover:shadow-lg transition-all duration-200 anim-slide-up" x-data="{ open: null }">
+    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+        <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            <svg class="w-4 h-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>
+            {{ month_name }} {{ year }}
+        </h2>
+    </div>
+
+    <div class="p-6">
+        <!-- Weekday Headers -->
+        <div class="grid grid-cols-7 gap-2 mb-2">
+            {% for wd in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+                <div class="text-center text-xs font-semibold text-gray-400 dark:text-gray-500">{{ wd }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Heatmap Grid -->
+        <div class="grid grid-cols-7 gap-2">
+            {% for _ in range(start_weekday) %}
+                <div></div>
+            {% endfor %}
+
+            {% for day in heatmap_data %}
+
+                <div class="relative"
+                     @click="open === '{{ day.date }}' ? open = null : open = '{{ day.date }}'"
+                     :class="{ 'ring-2 ring-brand-500 dark:ring-brand-400': open === '{{ day.date }}' }">
+
+                    <div class="aspect-square rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110
+                        {% if day.is_today %}ring-2 ring-brand-500 dark:ring-brand-400{% endif %}
+                        {% if day.minutes == 0 %}bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600
+                        {% elif day.minutes <= 30 %}bg-emerald-100 dark:bg-emerald-900/40 hover:bg-emerald-200 dark:hover:bg-emerald-800/60
+                        {% elif day.minutes <= 60 %}bg-emerald-200 dark:bg-emerald-800/50 hover:bg-emerald-300 dark:hover:bg-emerald-700/70
+                        {% elif day.minutes <= 120 %}bg-emerald-300 dark:bg-emerald-700/60 hover:bg-emerald-400 dark:hover:bg-emerald-600/80
+                        {% elif day.minutes <= 180 %}bg-emerald-400 dark:bg-emerald-600/70 hover:bg-emerald-500 dark:hover:bg-emerald-500/80
+                        {% else %}bg-emerald-500 dark:bg-emerald-500/80 hover:bg-emerald-600 dark:hover:bg-emerald-400{% endif %}">
+                        <span class="text-sm font-bold {% if day.minutes == 0 %}text-gray-400 dark:text-gray-500{% else %}text-emerald-900 dark:text-emerald-100{% endif %}">{{ day.day }}</span>
+                        {% if day.minutes > 0 %}
+                            <span class="text-[9px] font-medium {% if day.minutes <= 30 %}text-emerald-600 dark:text-emerald-400{% elif day.minutes <= 60 %}text-emerald-700 dark:text-emerald-300{% else %}text-emerald-900 dark:text-emerald-100{% endif %}">{{ day.minutes }}m</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Day Popover -->
+                    <div x-show="open === '{{ day.date }}'"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         @click.away="open = null"
+                         @click.stop
+                         class="absolute z-30 left-1/2 -translate-x-1/2 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl dark:shadow-gray-900/50 border border-gray-200 dark:border-gray-700 p-4 pointer-events-auto">
+                        <p class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-1">{{ day.date }}</p>
+                        {% if day.minutes > 0 %}
+                            <p class="text-sm font-semibold text-brand-600 dark:text-brand-400 mb-2">{{ day.minutes|format_duration }}</p>
+                            {% if day.subjects %}
+                                <div class="space-y-1.5">
+                                    {% for sub in day.subjects %}
+                                        <div class="flex items-center justify-between text-xs">
+                                            <span class="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
+                                                {% if sub.color %}
+                                                    <span class="w-2 h-2 rounded-full flex-shrink-0" style="background: {{ sub.color }}"></span>
+                                                {% else %}
+                                                    <span class="w-2 h-2 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
+                                                {% endif %}
+                                                {{ sub.name }}
+                                            </span>
+                                            <span class="font-semibold text-gray-700 dark:text-gray-300">{{ sub.minutes }}m</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-xs text-gray-400 dark:text-gray-500">No study sessions.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Legend -->
+        <div class="flex items-center justify-center gap-2 mt-6 text-xs text-gray-500 dark:text-gray-400">
+            <span>Less</span>
+            <div class="w-4 h-4 rounded bg-gray-100 dark:bg-gray-700"></div>
+            <div class="w-4 h-4 rounded bg-emerald-100 dark:bg-emerald-900/40"></div>
+            <div class="w-4 h-4 rounded bg-emerald-200 dark:bg-emerald-800/50"></div>
+            <div class="w-4 h-4 rounded bg-emerald-300 dark:bg-emerald-700/60"></div>
+            <div class="w-4 h-4 rounded bg-emerald-400 dark:bg-emerald-600/70"></div>
+            <div class="w-4 h-4 rounded bg-emerald-500 dark:bg-emerald-500/80"></div>
+            <span>More</span>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

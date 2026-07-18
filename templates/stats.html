@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Header -->
+<div class="flex items-center gap-3 anim-fade-in">
+    <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-500/15 flex items-center justify-center">
+        <svg class="w-5 h-5 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+    </div>
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Stats</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-0.5">Your study breakdown and streak details.</p>
+    </div>
+</div>
+
+<!-- Streak Card -->
+<div class="bg-gradient-to-br from-orange-400 to-rose-500 rounded-2xl shadow-lg p-6 text-white hover:shadow-xl hover:scale-[1.02] transition-all duration-200 mt-6 anim-slide-up">
+    <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0 {% if streak > 0 %}anim-streak-glow{% endif %}">
+            <svg class="w-8 h-8 {% if streak > 0 %}animate-pulse{% endif %}" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.048 8.287 8.287 0 0 0 9 9.6a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" /></svg>
+        </div>
+        <div>
+            <p class="text-white/80 text-sm font-medium">Current Streak</p>
+            <p class="text-4xl font-bold">{{ streak }}<span class="text-lg font-medium text-white/70 ml-1">day{{ 's' if streak != 1 else '' }}</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Insights -->
+{% if insights %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden mt-6 hover:shadow-lg transition-all duration-200 anim-slide-up">
+    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+        <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            <svg class="w-4 h-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" /></svg>
+            Insights
+        </h2>
+    </div>
+    <div class="p-6 space-y-4">
+        {% if insights.best_weekday %}
+        <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" /></svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Your best day is <span class="text-emerald-600 dark:text-emerald-400">{{ insights.best_weekday.name }}</span></p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Average {{ insights.best_weekday.avg }} min per session</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if insights.worst_weekday %}
+        <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100"><span class="text-amber-600 dark:text-amber-400">{{ insights.worst_weekday.name }}</span> needs more attention</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Average {{ insights.worst_weekday.avg }} min per session</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if insights.most_studied %}
+        <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0 1 16.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.018 6.018 0 0 1-2.27.415 6.018 6.018 0 0 1-2.27-.415" /></svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Most studied: <span class="text-brand-600 dark:text-brand-400">{{ insights.most_studied.name }}</span></p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ insights.most_studied.minutes|format_duration }} total all-time</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if insights.longest_streak > 0 %}
+        <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-rose-600 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.048 8.287 8.287 0 0 0 9 9.6a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" /></svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Longest streak: <span class="text-rose-600 dark:text-rose-400">{{ insights.longest_streak }} day{{ 's' if insights.longest_streak != 1 else '' }}</span></p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Keep that momentum going!</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if insights.busiest_day %}
+        <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-500/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Busiest day: <span class="text-violet-600 dark:text-violet-400">{{ insights.busiest_day.date.strftime('%b %d, %Y') }}</span></p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ insights.busiest_day.minutes|format_duration }} of study time</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Charts Row -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+    <!-- Stacked Bar Chart -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up">
+        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+            <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                <svg class="w-4 h-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+                Last 7 Days (hours)
+            </h2>
+        </div>
+        <div class="p-6">
+            <canvas id="barChart" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Doughnut Chart -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up">
+        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+            <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                <svg class="w-4 h-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" /></svg>
+                All-Time Distribution (hours)
+            </h2>
+        </div>
+        <div class="p-6 flex justify-center">
+            <canvas id="doughnutChart" height="220" style="max-width: 280px;"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        const gridColor = isDark ? '#374151' : '#f3f4f6';
+        const textColor = isDark ? '#9ca3af' : '#6b7280';
+
+        fetch('/api/chart-data')
+            .then(res => res.json())
+            .then(data => {
+                const barCtx = document.getElementById('barChart').getContext('2d');
+                new Chart(barCtx, {
+                    type: 'bar',
+                    data: { labels: data.bar.labels, datasets: data.bar.datasets },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 12 }, color: textColor } } },
+                        scales: {
+                            x: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 }, color: textColor } },
+                            y: { stacked: true, beginAtZero: true, grid: { color: gridColor }, ticks: { font: { size: 11 }, color: textColor }, title: { display: true, text: 'Hours', font: { size: 12 }, color: textColor } }
+                        }
+                    }
+                });
+
+                if (data.doughnut.data.length > 0) {
+                    const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
+                    new Chart(doughnutCtx, {
+                        type: 'doughnut',
+                        data: { labels: data.doughnut.labels, datasets: [{ data: data.doughnut.data, backgroundColor: data.doughnut.colors, borderWidth: 2, borderColor: isDark ? '#1f2937' : '#ffffff' }] },
+                        options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 12 }, color: textColor } } } }
+                    });
+                } else {
+                    document.getElementById('doughnutChart').parentElement.innerHTML = '<div class="text-center py-8"><p class="text-gray-400 dark:text-gray-500 text-sm">No study data yet.</p></div>';
+                }
+            });
+    });
+</script>
+
+<!-- Stats Table -->
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden mt-6 hover:shadow-lg transition-all duration-200 anim-slide-up">
+    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            <svg class="w-5 h-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+            Time per Subject
+        </h2>
+    </div>
+
+    {% if subjects %}
+        <div class="hidden sm:block overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-gray-100 dark:border-gray-700">
+                        <th class="text-left px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Subject</th>
+                        <th class="text-right px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Today</th>
+                        <th class="text-right px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">This Week</th>
+                        <th class="text-right px-6 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">All Time</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                    {% for s in subjects %}
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
+                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                                {% if s.color %}
+                                    <span class="w-3 h-3 rounded-full flex-shrink-0" style="background: {{ s.color }}"></span>
+                                {% else %}
+                                    <span class="w-3 h-3 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
+                                {% endif %}
+                                {{ s.name }}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="inline-flex items-center bg-brand-50 dark:bg-brand-500/15 text-brand-700 dark:text-brand-400 text-xs font-semibold px-2.5 py-1 rounded-full">{{ today_stats[s.id]|format_duration }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="inline-flex items-center bg-violet-50 dark:bg-violet-500/15 text-violet-700 dark:text-violet-400 text-xs font-semibold px-2.5 py-1 rounded-full">{{ week_stats[s.id]|format_duration }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="inline-flex items-center bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-xs font-semibold px-2.5 py-1 rounded-full">{{ alltime_stats[s.id]|format_duration }}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="sm:hidden divide-y divide-gray-100 dark:divide-gray-700">
+            {% for s in subjects %}
+                <div class="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
+                    <div class="flex items-center gap-2 mb-3">
+                        {% if s.color %}
+                            <span class="w-3 h-3 rounded-full flex-shrink-0" style="background: {{ s.color }}"></span>
+                        {% else %}
+                            <span class="w-3 h-3 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
+                        {% endif %}
+                        <span class="font-semibold text-gray-900 dark:text-gray-100">{{ s.name }}</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="text-center">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Today</p>
+                            <span class="inline-flex items-center bg-brand-50 dark:bg-brand-500/15 text-brand-700 dark:text-brand-400 text-xs font-semibold px-2 py-1 rounded-full">{{ today_stats[s.id]|format_duration }}</span>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Week</p>
+                            <span class="inline-flex items-center bg-violet-50 dark:bg-violet-500/15 text-violet-700 dark:text-violet-400 text-xs font-semibold px-2 py-1 rounded-full">{{ week_stats[s.id]|format_duration }}</span>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">All Time</p>
+                            <span class="inline-flex items-center bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-xs font-semibold px-2 py-1 rounded-full">{{ alltime_stats[s.id]|format_duration }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="px-6 py-12 text-center">
+            <div class="w-16 h-16 rounded-full bg-brand-50 dark:bg-brand-500/15 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">No data yet</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mb-5">Add subjects and log sessions to see your stats here.</p>
+            <a href="{{ url_for('subjects.subjects') }}" class="inline-flex items-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md hover:bg-brand-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.98]">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                Add a Subject
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Topic Breakdown -->
+{% if topic_stats %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden mt-6 hover:shadow-lg transition-all duration-200 anim-slide-up">
+    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            <svg class="w-5 h-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
+            Topic Breakdown
+        </h2>
+    </div>
+    <div class="divide-y divide-gray-100 dark:divide-gray-700">
+        {% for s in subjects %}
+            {% if s.id in topic_stats %}
+                <div class="px-6 py-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        {% if s.color %}
+                            <span class="w-3 h-3 rounded-full flex-shrink-0" style="background: {{ s.color }}"></span>
+                        {% else %}
+                            <span class="w-3 h-3 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
+                        {% endif %}
+                        <span class="font-semibold text-gray-900 dark:text-gray-100 text-sm">{{ s.name }}</span>
+                    </div>
+                    <div class="ml-5 space-y-1.5">
+                        {% set ts = topic_stats[s.id] %}
+                        {% for t in ts.topics %}
+                            {% if t.total > 0 %}
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-600 dark:text-gray-400">{{ t.name }}</span>
+                                    <span class="inline-flex items-center bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold px-2 py-0.5 rounded-full">{{ t.total|format_duration }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if ts.unassigned > 0 %}
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-gray-400 dark:text-gray-500 italic">Unassigned</span>
+                                <span class="inline-flex items-center bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 font-semibold px-2 py-0.5 rounded-full">{{ ts.unassigned|format_duration }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
