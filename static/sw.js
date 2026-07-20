@@ -17,9 +17,9 @@ const PRECACHE_URLS = [
 ];
 
 const NEVER_CACHE = [
-  '/auth/login',
-  '/auth/logout',
-  '/auth/register',
+  '/login',
+  '/logout',
+  '/register',
 ];
 
 self.addEventListener('install', (event) => {
