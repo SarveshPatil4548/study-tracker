@@ -11,68 +11,124 @@
         <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>
     </div>
     <p class="text-sm text-amber-700 dark:text-amber-300 flex-1">You haven't studied today yet — log a session to keep your streak alive!</p>
-    <a href="{{ url_for('sessions.new_session') }}" class="text-sm font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors duration-200 whitespace-nowrap">Log Now</a>
-    <button @click="show = false" class="text-amber-400 dark:text-amber-500 hover:text-amber-600 dark:hover:text-amber-300 transition-colors duration-200">
+    <a href="{{ url_for('sessions.new_session') }}" class="text-sm font-semibold text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 transition-colors duration-200 whitespace-nowrap min-h-[44px] flex items-center">Log Now</a>
+    <button @click="show = false" class="text-amber-400 dark:text-amber-500 hover:text-amber-600 dark:hover:text-amber-300 transition-colors duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
     </button>
 </div>
 {% endif %}
 
-<!-- Header -->
-<div class="flex items-center justify-between anim-fade-in">
+<!-- Header + Quick Actions Row -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 anim-fade-in">
     <div>
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            {% set hour = now.hour %}
+            {% if hour < 12 %}Good morning{% elif hour < 17 %}Good afternoon{% else %}Good evening{% endif %}, {{ current_user.username }}
+        </h1>
         <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">{{ today.strftime('%A, %B %d, %Y') }}</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="{{ url_for('sessions.sessions_list') }}"
+           class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 shadow-sm hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 min-h-[44px]">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+            Sessions
+        </a>
+        <a href="{{ url_for('sessions.new_session') }}"
+           class="inline-flex items-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md hover:bg-brand-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.95] min-h-[44px]">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            Log Session
+        </a>
     </div>
 </div>
 
-<!-- Centered Log Session CTA -->
-<div class="mt-6 flex justify-center anim-slide-up stagger-1">
-    <a href="{{ url_for('sessions.new_session') }}"
-       class="inline-flex items-center gap-2.5 bg-brand-600 text-white px-8 py-3.5 rounded-2xl text-base font-semibold shadow-lg hover:bg-brand-700 hover:shadow-xl hover:scale-[1.03] transition-all duration-200 active:scale-[0.95]">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
-        Log a Study Session
-    </a>
+<!-- Stat Cards Row -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-6">
+    <!-- Today -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-4 sm:p-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 anim-slide-up stagger-1 border-b-2 border-brand-400 dark:border-brand-500">
+        <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-500/15 flex items-center justify-center">
+                <svg class="w-4 h-4 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+            </div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Today</p>
+        </div>
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{{ today_total|format_duration }}</p>
+    </div>
+
+    <!-- This Week -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-4 sm:p-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 anim-slide-up stagger-2 border-b-2 border-violet-400 dark:border-violet-500">
+        <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-500/15 flex items-center justify-center">
+                <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+            </div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">This Week</p>
+        </div>
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{{ week_total|format_duration }}</p>
+    </div>
+
+    <!-- All Time -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-4 sm:p-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 anim-slide-up stagger-3 border-b-2 border-emerald-400 dark:border-emerald-500">
+        <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/15 flex items-center justify-center">
+                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
+            </div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">All Time</p>
+        </div>
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{{ alltime_total|format_duration }}</p>
+    </div>
+
+    <!-- Total Sessions -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-4 sm:p-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 anim-slide-up stagger-4 border-b-2 border-amber-400 dark:border-amber-500">
+        <div class="flex items-center gap-2 mb-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-500/15 flex items-center justify-center">
+                <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" /></svg>
+            </div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Sessions</p>
+        </div>
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{{ total_sessions }}</p>
+    </div>
 </div>
 
 <!-- Timer Section -->
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up stagger-2" x-data="studyTimer()">
-    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up stagger-5 mt-6" x-data="studyTimer()">
+    <div class="bg-gradient-to-r from-brand-500/5 to-violet-500/5 dark:from-brand-500/10 dark:to-violet-500/10 px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
         <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            <svg class="w-4 h-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+            <svg class="w-5 h-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
             Study Timer
         </h2>
-        <span x-show="running" class="text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+        <span x-show="running" x-transition class="text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1 rounded-full flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
             Running
         </span>
+        <span x-show="!running && elapsed > 0" class="text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 px-3 py-1 rounded-full">
+            Stopped
+        </span>
     </div>
-    <div class="px-6 py-6">
-        <div class="text-center mb-5">
-            <p class="text-5xl font-mono font-bold text-gray-900 dark:text-gray-100 tabular-nums tracking-wider" x-text="display">00:00:00</p>
-            <p class="text-xs text-gray-400 dark:text-gray-500 mt-2" x-text="running ? 'Timer is running — navigate freely, it persists!' : (elapsed > 0 ? 'Timer stopped — log this session below' : 'Press Start to begin timing your study session')"></p>
+    <div class="px-4 sm:px-6 py-8">
+        <div class="text-center mb-6">
+            <p class="text-4xl sm:text-6xl font-mono font-bold text-gray-900 dark:text-gray-100 tabular-nums tracking-wider" x-text="display">00:00:00</p>
+            <p class="text-sm text-gray-400 dark:text-gray-500 mt-3" x-text="running ? 'Timer is running — navigate freely, it persists!' : (elapsed > 0 ? 'Timer stopped — log this session below' : 'Press Start to begin timing your study session')"></p>
         </div>
-        <div class="flex justify-center gap-3">
+        <div class="flex flex-wrap justify-center gap-3">
             <template x-if="!running">
-                <button @click="start()" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-md hover:bg-emerald-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.98]">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" /></svg>
+                <button @click="start()" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-8 py-3 rounded-xl text-sm font-semibold shadow-md hover:bg-emerald-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.98] min-h-[44px]">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" /></svg>
                     Start
                 </button>
             </template>
             <template x-if="running">
-                <button @click="stop()" class="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-md hover:bg-red-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.98]">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.75 5.75A2.25 2.25 0 0 1 8 3.5h8.25a2.25 2.25 0 0 1 2.25 2.25v12.5a2.25 2.25 0 0 1-2.25 2.25H8a2.25 2.25 0 0 1-2.25-2.25V5.75Z" /></svg>
+                <button @click="stop()" class="inline-flex items-center gap-2 bg-red-600 text-white px-8 py-3 rounded-xl text-sm font-semibold shadow-md hover:bg-red-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.98] min-h-[44px]">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.75 5.75A2.25 2.25 0 0 1 8 3.5h8.25a2.25 2.25 0 0 1 2.25 2.25v12.5a2.25 2.25 0 0 1-2.25 2.25H8a2.25 2.25 0 0 1-2.25-2.25V5.75Z" /></svg>
                     Stop
                 </button>
             </template>
             <template x-if="!running && elapsed > 0">
-                <button @click="reset()" class="inline-flex items-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200">
+                <button @click="reset()" class="inline-flex items-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-6 py-3 rounded-xl text-sm font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 min-h-[44px]">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182" /></svg>
                     Reset
                 </button>
             </template>
             <template x-if="!running && elapsed > 0">
-                <a href="{{ url_for('sessions.new_session') }}" class="inline-flex items-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md hover:bg-brand-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.98]">
+                <a href="{{ url_for('sessions.new_session') }}" class="inline-flex items-center gap-2 bg-brand-600 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-md hover:bg-brand-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.98] min-h-[44px]">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
                     Log This Session
                 </a>
@@ -81,73 +137,26 @@
     </div>
 </div>
 
-<!-- Stat Cards Row -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-    <!-- Today -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 anim-slide-up stagger-3">
-        <div class="flex items-center gap-2 mb-2">
-            <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-500/15 flex items-center justify-center">
-                <svg class="w-4 h-4 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
-            </div>
-            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Today</p>
-        </div>
-        <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ today_total|format_duration }}</p>
-    </div>
-
-    <!-- This Week -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 anim-slide-up stagger-4">
-        <div class="flex items-center gap-2 mb-2">
-            <div class="w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-500/15 flex items-center justify-center">
-                <svg class="w-4 h-4 text-violet-600 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
-            </div>
-            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">This Week</p>
-        </div>
-        <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ week_total|format_duration }}</p>
-    </div>
-
-    <!-- All Time -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 anim-slide-up stagger-5">
-        <div class="flex items-center gap-2 mb-2">
-            <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/15 flex items-center justify-center">
-                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
-            </div>
-            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">All Time</p>
-        </div>
-        <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ alltime_total|format_duration }}</p>
-    </div>
-
-    <!-- Total Sessions -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-5 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 anim-slide-up">
-        <div class="flex items-center gap-2 mb-2">
-            <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-500/15 flex items-center justify-center">
-                <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" /></svg>
-            </div>
-            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Sessions</p>
-        </div>
-        <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">{{ total_sessions }}</p>
-    </div>
-</div>
-
 <!-- Upcoming Exams -->
 {% if upcoming_exams %}
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up">
-    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up mt-6">
+    <div class="px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
         <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
             <svg class="w-4 h-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
             Upcoming Exams
         </h2>
-        <a href="{{ url_for('exams.exams_list') }}" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors duration-200">View all</a>
+        <a href="{{ url_for('exams.exams_list') }}" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors duration-200 min-h-[44px] flex items-center">View all</a>
     </div>
     <ul class="divide-y divide-gray-100 dark:divide-gray-700">
         {% for item in upcoming_exams %}
             {% set exam = item.exam %}
-            <li class="px-6 py-3.5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
+            <li class="px-4 sm:px-6 py-3.5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
                 <div class="flex items-center justify-between gap-3">
                     <div class="flex items-center gap-3 min-w-0">
                         {% if exam.subject.color %}
-                            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background: {{ exam.subject.color }}"></span>
+                            <span class="w-3 h-3 rounded-full flex-shrink-0" style="background: {{ exam.subject.color }}"></span>
                         {% else %}
-                            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
+                            <span class="w-3 h-3 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
                         {% endif %}
                         <div class="min-w-0">
                             <p class="font-medium text-gray-900 dark:text-gray-100 text-sm truncate">{{ exam.title }}</p>
@@ -179,8 +188,8 @@
 
 <!-- Weekly Goal Progress -->
 {% if goal_progress %}
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up">
-    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up mt-6">
+    <div class="px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
         <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
             <svg class="w-4 h-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
             Weekly Goals
@@ -188,27 +197,27 @@
     </div>
     <ul class="divide-y divide-gray-100 dark:divide-gray-700">
         {% for g in goal_progress %}
-        <li class="px-6 py-3.5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
-            <div class="flex items-center justify-between mb-1.5">
+        <li class="px-4 sm:px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
+            <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                     {% if g.subject.color %}
-                        <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background: {{ g.subject.color }}"></span>
+                        <span class="w-3 h-3 rounded-full flex-shrink-0" style="background: {{ g.subject.color }}"></span>
                     {% else %}
-                        <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
+                        <span class="w-3 h-3 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
                     {% endif %}
                     <span class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ g.subject.name }}</span>
                 </div>
                 <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">{{ g.current|format_duration }} / {{ g.target }} min</span>
             </div>
-            <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
-                <div class="h-2 rounded-full transition-all duration-500
+            <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5">
+                <div class="h-2.5 rounded-full transition-all duration-500
                     {% if g.pct >= 70 %}bg-emerald-500
                     {% elif g.pct >= 40 %}bg-amber-400
                     {% else %}bg-red-400{% endif %}"
                     style="width: {{ g.pct }}%"></div>
             </div>
             {% if g.behind %}
-            <p class="text-xs text-amber-600 dark:text-amber-400 mt-1.5 flex items-center gap-1">
+            <p class="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>
                 Behind on {{ g.subject.name }} this week
             </p>
@@ -224,24 +233,24 @@
 
     <!-- Recent Sessions (2 cols) -->
     <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up">
-        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+        <div class="px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
             <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <svg class="w-4 h-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
                 Recent Sessions
             </h2>
-            <a href="{{ url_for('sessions.sessions_list') }}" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors duration-200">View all</a>
+            <a href="{{ url_for('sessions.sessions_list') }}" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors duration-200 min-h-[44px] flex items-center">View all</a>
         </div>
 
         {% if recent_sessions %}
             <ul class="divide-y divide-gray-100 dark:divide-gray-700">
                 {% for sess in recent_sessions %}
-                    <li class="px-6 py-3.5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
+                    <li class="px-4 sm:px-6 py-3.5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
                         <div class="flex items-center justify-between gap-3">
                             <div class="flex items-center gap-3 min-w-0">
                                 {% if sess.subject.color %}
-                                    <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background: {{ sess.subject.color }}"></span>
+                                    <span class="w-3 h-3 rounded-full flex-shrink-0" style="background: {{ sess.subject.color }}"></span>
                                 {% else %}
-                                    <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
+                                    <span class="w-3 h-3 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
                                 {% endif %}
                                 <div class="min-w-0">
                                     <p class="font-medium text-gray-900 dark:text-gray-100 text-sm truncate">{{ sess.subject.name }}</p>
@@ -252,25 +261,31 @@
                             </div>
                             <div class="flex items-center gap-3 flex-shrink-0">
                                 <span class="text-xs text-gray-400 dark:text-gray-500">{{ sess.date.strftime('%b %d') }}</span>
-                                <span class="inline-flex items-center bg-brand-50 dark:bg-brand-500/15 text-brand-700 dark:text-brand-400 text-xs font-semibold px-2 py-0.5 rounded-full">{{ sess.duration_minutes|format_duration }}</span>
+                                <span class="inline-flex items-center bg-brand-50 dark:bg-brand-500/15 text-brand-700 dark:text-brand-400 text-xs font-semibold px-2.5 py-1 rounded-full">{{ sess.duration_minutes|format_duration }}</span>
                             </div>
                         </div>
                     </li>
                 {% endfor %}
             </ul>
         {% else %}
-            <div class="px-6 py-10 text-center">
-                <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mx-auto mb-3">
-                    <svg class="w-6 h-6 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+            <div class="px-4 sm:px-6 py-12 text-center">
+                <div class="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
                 </div>
-                <p class="text-gray-500 dark:text-gray-400 text-sm">No sessions yet. Your history will appear here.</p>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-3">No sessions yet.</p>
+                <p class="text-gray-400 dark:text-gray-500 text-xs mb-4">Your study history will appear here once you log your first session.</p>
+                <a href="{{ url_for('sessions.new_session') }}"
+                   class="inline-flex items-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md hover:bg-brand-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.98] min-h-[44px]">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                    Log Your First Session
+                </a>
             </div>
         {% endif %}
     </div>
 
     <!-- Weekly Subject Breakdown (1 col) -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up">
-        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+        <div class="px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700">
             <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <svg class="w-4 h-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>
                 This Week by Subject
@@ -281,13 +296,13 @@
             <ul class="divide-y divide-gray-100 dark:divide-gray-700">
                 {% for s in subjects %}
                     {% set mins = weekly_subject[s.id] %}
-                    <li class="px-6 py-3.5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
-                        <div class="flex items-center justify-between mb-1.5">
+                    <li class="px-4 sm:px-6 py-3.5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
+                        <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center gap-2">
                                 {% if s.color %}
-                                    <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background: {{ s.color }}"></span>
+                                    <span class="w-3 h-3 rounded-full flex-shrink-0" style="background: {{ s.color }}"></span>
                                 {% else %}
-                                    <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
+                                    <span class="w-3 h-3 rounded-full flex-shrink-0 bg-gray-300 dark:bg-gray-600"></span>
                                 {% endif %}
                                 <span class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ s.name }}</span>
                             </div>
@@ -298,8 +313,8 @@
                         {% else %}
                             {% set pct = 0 %}
                         {% endif %}
-                        <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
-                            <div class="h-1.5 rounded-full transition-all duration-500
+                        <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
+                            <div class="h-2 rounded-full transition-all duration-500
                                 {% if s.color %}opacity-80{% else %}bg-brand-500{% endif %}"
                                 style="width: {{ pct }}%; {% if s.color %}background: {{ s.color }}{% endif %}"></div>
                         </div>
@@ -307,14 +322,16 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <div class="px-6 py-10 text-center">
-                <div class="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mx-auto mb-3">
-                    <svg class="w-6 h-6 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg>
+            <div class="px-4 sm:px-6 py-12 text-center">
+                <div class="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg>
                 </div>
                 <p class="text-gray-500 dark:text-gray-400 text-sm mb-3">No subjects yet.</p>
-                <a href="{{ url_for('subjects.subjects') }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors duration-200">
-                    Add your first subject
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
+                <p class="text-gray-400 dark:text-gray-500 text-xs mb-4">Add subjects to track your progress across different topics.</p>
+                <a href="{{ url_for('subjects.subjects') }}"
+                   class="inline-flex items-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md hover:bg-brand-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.98] min-h-[44px]">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+                    Add Your First Subject
                 </a>
             </div>
         {% endif %}
@@ -324,17 +341,19 @@
 
 <!-- Motivational Footer -->
 {% if today_total == 0 and week_total == 0 %}
-<div class="mt-6 bg-gradient-to-r from-brand-500 to-violet-500 rounded-2xl shadow-lg p-8 text-white hover:shadow-xl transition-all duration-200 anim-slide-up">
-    <div class="flex flex-col items-center text-center gap-4">
-        <div class="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center anim-streak-glow">
-            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.048 8.287 8.287 0 0 0 9 9.6a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" /></svg>
+<div class="mt-6 bg-gradient-to-br from-brand-500 via-brand-600 to-violet-600 rounded-2xl shadow-xl p-6 sm:p-8 text-white hover:shadow-2xl transition-all duration-300 anim-slide-up overflow-hidden relative">
+    <div class="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+    <div class="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+    <div class="relative flex flex-col items-center text-center gap-4">
+        <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center anim-streak-glow">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.048 8.287 8.287 0 0 0 9 9.6a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" /></svg>
         </div>
         <div>
-            <p class="font-bold text-xl">Kick off your study streak today!</p>
-            <p class="text-white/80 text-sm mt-1">Log your first session to start building momentum.</p>
+            <p class="font-bold text-xl sm:text-2xl">Kick off your study streak today!</p>
+            <p class="text-white/70 text-sm mt-1.5">Log your first session to start building momentum.</p>
         </div>
         <a href="{{ url_for('sessions.new_session') }}"
-           class="bg-white text-brand-600 px-8 py-3 rounded-2xl text-sm font-bold shadow-lg hover:bg-white/90 hover:shadow-xl hover:scale-[1.03] transition-all duration-200 active:scale-[0.95] flex items-center gap-2">
+           class="bg-white text-brand-600 px-8 py-3.5 rounded-xl text-sm font-bold shadow-lg hover:bg-white/90 hover:shadow-xl hover:scale-[1.03] transition-all duration-200 active:scale-[0.95] flex items-center gap-2 mt-1">
             Start Now
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
         </a>

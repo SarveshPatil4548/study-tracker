@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from sqlalchemy import func
 from models import db, StudySession, Subject, Exam
 
@@ -94,8 +94,10 @@ def dashboard():
             urgency = "normal"
         upcoming_exams_data.append({"exam": exam, "days_left": days_left, "urgency": urgency})
 
+    now = datetime.now()
     return render_template(
         "dashboard.html",
+        now=now,
         today_total=today_total,
         week_total=week_total,
         alltime_total=alltime_total,
