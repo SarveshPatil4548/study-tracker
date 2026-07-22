@@ -95,9 +95,11 @@ def dashboard():
         upcoming_exams_data.append({"exam": exam, "days_left": days_left, "urgency": urgency})
 
     now = datetime.now()
+    hour = now.hour
     return render_template(
         "dashboard.html",
         now=now,
+        hour=hour,
         today_total=today_total,
         week_total=week_total,
         alltime_total=alltime_total,

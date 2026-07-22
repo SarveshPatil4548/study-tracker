@@ -22,8 +22,7 @@
 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 anim-fade-in">
     <div>
         <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {% set hour = now.hour %}
-            {% if hour < 12 %}Good morning{% elif hour < 17 %}Good afternoon{% else %}Good evening{% endif %}, {{ current_user.username }}
+            {% if hour >= 21 or hour < 5 %}Good night{% elif hour < 12 %}Good morning{% elif hour < 17 %}Good afternoon{% else %}Good evening{% endif %}, {{ current_user.username }}
         </h1>
         <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">{{ today.strftime('%A, %B %d, %Y') }}</p>
     </div>
