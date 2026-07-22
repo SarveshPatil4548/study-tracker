@@ -5,6 +5,7 @@ const PRECACHE_URLS = [
   '/static/manifest.json',
   '/static/icons/icon-192.png',
   '/static/icons/icon-512.png',
+  '/static/offline.html',
   '/',
   '/dashboard',
   '/subjects',
@@ -68,6 +69,8 @@ async function cacheFirst(request) {
     }
     return response;
   } catch {
+    const offlinePage = await caches.match('/static/offline.html');
+    if (offlinePage) return offlinePage;
     return new Response('Offline', { status: 503 });
   }
 }
@@ -83,6 +86,8 @@ async function networkFirst(request) {
   } catch {
     const cached = await caches.match(request);
     if (cached) return cached;
+    const offlinePage = await caches.match('/static/offline.html');
+    if (offlinePage) return offlinePage;
     return new Response('Offline', { status: 503 });
   }
 }
