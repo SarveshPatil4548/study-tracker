@@ -136,6 +136,95 @@
     </div>
 </div>
 
+<style>
+@keyframes timerPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.3); }
+    50% { box-shadow: 0 0 0 15px rgba(99,102,241,0); }
+}
+.timer-pulse { animation: timerPulse 2s ease-in-out infinite; }
+</style>
+
+<!-- Pomodoro Timer -->
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up mt-6" x-data="pomodoroTimer()">
+    <div class="bg-gradient-to-r from-brand-500/5 to-violet-500/5 dark:from-brand-500/10 dark:to-violet-500/10 px-4 sm:px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+        <h2 class="text-base font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            <svg class="w-5 h-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+            Pomodoro Timer
+        </h2>
+        <span x-show="running" x-transition class="text-xs font-medium text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/30 px-3 py-1 rounded-full flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
+            Running
+        </span>
+    </div>
+    <div class="px-4 sm:px-6 py-8">
+        <div class="relative w-56 h-56 mx-auto" :class="{ 'timer-pulse': running }">
+            <svg class="w-full h-full" viewBox="0 0 200 200" fill="none">
+                <circle cx="100" cy="100" r="85" stroke="currentColor" class="text-gray-200 dark:text-gray-700" stroke-width="8"/>
+                <circle cx="100" cy="100" r="85" :stroke="ringColor" stroke-width="8" stroke-linecap="round"
+                        fill="none"
+                        :stroke-dasharray="circumference"
+                        :stroke-dashoffset="strokeDashoffset"
+                        transform="rotate(-90 100 100)"
+                        class="transition-all duration-300 ease-linear"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-sm font-medium" :class="mode === 'focus' ? 'text-brand-600 dark:text-brand-400' : 'text-emerald-600 dark:text-emerald-400'" x-text="modeLabel"></span>
+                <span class="text-4xl font-mono font-bold text-gray-900 dark:text-gray-100 tabular-nums tracking-wider mt-1" x-text="display">25:00</span>
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-2 mt-6">
+            <template x-for="i in 4" :key="i">
+                <div class="w-3 h-3 rounded-full transition-all duration-300"
+                     :class="i <= filledDots ? 'bg-brand-500 dark:bg-brand-400 shadow-sm' : 'bg-gray-200 dark:bg-gray-700'"></div>
+            </template>
+        </div>
+
+        <div class="flex justify-center gap-3 mt-6">
+            <template x-if="!running">
+                <button @click="start()" class="inline-flex items-center gap-2 bg-brand-600 text-white px-8 py-3 rounded-xl text-sm font-semibold shadow-md hover:bg-brand-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.98] min-h-[44px]">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" /></svg>
+                    Start
+                </button>
+            </template>
+            <template x-if="running">
+                <button @click="pause()" class="inline-flex items-center gap-2 bg-amber-600 text-white px-8 py-3 rounded-xl text-sm font-semibold shadow-md hover:bg-amber-700 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 active:scale-[0.98] min-h-[44px]">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" /></svg>
+                    Pause
+                </button>
+            </template>
+            <button @click="reset()" class="inline-flex items-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-6 py-3 rounded-xl text-sm font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 min-h-[44px]">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182" /></svg>
+                Reset
+            </button>
+            <button @click="skip()" class="inline-flex items-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-6 py-3 rounded-xl text-sm font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 min-h-[44px]">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 5.25v13.5" /></svg>
+                Skip
+            </button>
+        </div>
+
+        <div x-show="showLogPrompt" x-transition class="mt-6 p-4 bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800 rounded-xl">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-brand-100 dark:bg-brand-900/40 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-brand-600 dark:text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Pomodoro complete!</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Would you like to log this session?</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="{{ url_for('sessions.new_session') }}" class="inline-flex items-center gap-1.5 bg-brand-600 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-sm hover:bg-brand-700 transition-all duration-200 min-h-[44px]">
+                        Log Now
+                    </a>
+                    <button @click="dismissLogPrompt()" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center text-xs font-medium">
+                        Dismiss
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Upcoming Exams -->
 {% if upcoming_exams %}
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 overflow-hidden hover:shadow-lg transition-all duration-200 anim-slide-up mt-6">
@@ -423,6 +512,177 @@ function studyTimer() {
             const m = Math.floor((this.elapsed % 3600) / 60);
             const s = this.elapsed % 60;
             this.display = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        }
+    }
+}
+
+function pomodoroTimer() {
+    return {
+        _now: Date.now(),
+        FOCUS_TIME: 25 * 60,
+        SHORT_BREAK: 5 * 60,
+        LONG_BREAK: 15 * 60,
+        circumference: 2 * Math.PI * 85,
+
+        mode: 'focus',
+        running: false,
+        remaining: 25 * 60,
+        startedAt: null,
+        completedPomodoros: 0,
+        interval: null,
+        showLogPrompt: false,
+
+        get totalTime() {
+            return this.mode === 'focus' ? this.FOCUS_TIME
+                 : this.mode === 'shortBreak' ? this.SHORT_BREAK
+                 : this.LONG_BREAK;
+        },
+        get timeRemaining() {
+            if (this.running && this.startedAt) {
+                const elapsed = Math.floor((this._now - this.startedAt) / 1000);
+                return Math.max(0, this.remaining - elapsed);
+            }
+            return this.remaining;
+        },
+        get display() {
+            const m = Math.floor(this.timeRemaining / 60);
+            const s = this.timeRemaining % 60;
+            return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        },
+        get progress() {
+            return this.totalTime > 0 ? 1 - (this.timeRemaining / this.totalTime) : 0;
+        },
+        get strokeDashoffset() {
+            return this.circumference * (1 - this.progress);
+        },
+        get modeLabel() {
+            return { focus: 'Focus Time', shortBreak: 'Short Break', longBreak: 'Long Break' }[this.mode];
+        },
+        get ringColor() {
+            return this.mode === 'focus' ? '#6366F1' : '#10B981';
+        },
+        get filledDots() {
+            if (this.completedPomodoros === 0) return 0;
+            const mod = this.completedPomodoros % 4;
+            return mod === 0 ? 4 : mod;
+        },
+
+        init() {
+            this.restoreState();
+            if (this.running && this.startedAt) {
+                const elapsed = Math.floor((Date.now() - this.startedAt) / 1000);
+                if (elapsed >= this.remaining) {
+                    this.handleTimerEnd(true);
+                } else {
+                    this.startTicking();
+                }
+            }
+        },
+
+        start() {
+            if (this.running) return;
+            this.running = true;
+            this.startedAt = Date.now();
+            this.remaining = this.timeRemaining;
+            this.saveState();
+            this.startTicking();
+        },
+
+        pause() {
+            if (!this.running) return;
+            this.remaining = this.timeRemaining;
+            this.running = false;
+            this.startedAt = null;
+            clearInterval(this.interval);
+            this.saveState();
+        },
+
+        reset() {
+            this.running = false;
+            this.startedAt = null;
+            this.remaining = this.totalTime;
+            this.showLogPrompt = false;
+            clearInterval(this.interval);
+            this.saveState();
+        },
+
+        skip() {
+            this.running = false;
+            this.startedAt = null;
+            clearInterval(this.interval);
+            this.handleTimerEnd();
+        },
+
+        handleTimerEnd(skipBeep) {
+            if (!skipBeep) this.playBeep();
+            this.running = false;
+            this.startedAt = null;
+            clearInterval(this.interval);
+
+            if (this.mode === 'focus') {
+                this.completedPomodoros++;
+                this.showLogPrompt = true;
+                this.mode = this.completedPomodoros % 4 === 0 ? 'longBreak' : 'shortBreak';
+            } else {
+                this.mode = 'focus';
+            }
+            this.remaining = this.totalTime;
+            this.saveState();
+        },
+
+        dismissLogPrompt() {
+            this.showLogPrompt = false;
+        },
+
+        playBeep() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                for (let i = 0; i < 3; i++) {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.value = 880;
+                    osc.type = 'sine';
+                    const t = ctx.currentTime + i * 0.25;
+                    gain.gain.setValueAtTime(0.3, t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+                    osc.start(t);
+                    osc.stop(t + 0.2);
+                }
+            } catch(e) {}
+        },
+
+        startTicking() {
+            this.interval = setInterval(() => {
+                this._now = Date.now();
+                if (this.running && this.timeRemaining <= 0) {
+                    this.handleTimerEnd();
+                }
+            }, 200);
+        },
+
+        saveState() {
+            localStorage.setItem('pomodoroTimer', JSON.stringify({
+                mode: this.mode,
+                remaining: this.remaining,
+                running: this.running,
+                startedAt: this.startedAt,
+                completedPomodoros: this.completedPomodoros
+            }));
+        },
+
+        restoreState() {
+            try {
+                const data = JSON.parse(localStorage.getItem('pomodoroTimer'));
+                if (data) {
+                    this.mode = data.mode || 'focus';
+                    this.remaining = data.remaining ?? 25 * 60;
+                    this.running = data.running || false;
+                    this.startedAt = data.startedAt || null;
+                    this.completedPomodoros = data.completedPomodoros || 0;
+                }
+            } catch(e) {}
         }
     }
 }

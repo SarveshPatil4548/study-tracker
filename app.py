@@ -1,6 +1,7 @@
 from flask import Flask, send_from_directory, abort, render_template, flash, make_response, redirect, url_for
 from flask_login import LoginManager, current_user
 from werkzeug.exceptions import RequestEntityTooLarge
+from flask_wtf.csrf import CSRFProtect, CSRFError
 from config import Config
 from models import db, Subject, User
 from utils import format_duration, split_duration
@@ -11,6 +12,8 @@ import os
 login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 login_manager.login_message_category = "error"
+
+csrf = CSRFProtect()
 
 
 @login_manager.user_loader
@@ -28,6 +31,14 @@ def create_app():
 
     db.init_app(app)
     login_manager.init_app(app)
+    csrf.init_app(app)
+
+    @app.errorhandler(CSRFError)
+    def handle_csrf_error(e):
+        flash("Session expired. Please try again.", "error")
+        if current_user.is_authenticated:
+            return redirect(url_for("dashboard.dashboard"))
+        return redirect(url_for("auth.login"))
 
     uploads_dir = os.path.join(app.root_path, "..", "uploads")
     os.makedirs(uploads_dir, exist_ok=True)

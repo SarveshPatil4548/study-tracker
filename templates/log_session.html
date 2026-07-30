@@ -15,6 +15,7 @@
 <!-- Form Card (centered) -->
 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/20 p-6 sm:p-8 hover:shadow-xl transition-all duration-200 mt-6 max-w-xl mx-auto anim-slide-up">
     <form method="POST" enctype="multipart/form-data" class="space-y-5" onsubmit="handleFormSubmit(this)">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <!-- Subject -->
         <div x-data="topicSelector()">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center gap-1.5">

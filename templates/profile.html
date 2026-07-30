@@ -57,6 +57,7 @@
     </div>
 
     <form method="POST" class="space-y-4" onsubmit="handleFormSubmit(this)">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="action" value="update_info">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -100,6 +101,7 @@
     </div>
 
     <form method="POST" class="space-y-4" onsubmit="handleFormSubmit(this)">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="action" value="change_password">
         <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center gap-1.5">

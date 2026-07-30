@@ -14,6 +14,7 @@ def _get_exams_with_stats():
     result = []
     for exam in exams:
         days_left = (exam.exam_date - today).days
+        from_date = exam.created_at.date() if exam.created_at else today
         study_minutes = (
             db.session.query(
                 func.coalesce(func.sum(StudySession.duration_minutes), 0)
@@ -21,7 +22,7 @@ def _get_exams_with_stats():
             .filter(
                 StudySession.user_id == uid,
                 StudySession.subject_id == exam.subject_id,
-                StudySession.date >= exam.created_at.date(),
+                StudySession.date >= from_date,
             )
             .scalar()
         )

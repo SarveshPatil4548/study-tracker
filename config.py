@@ -14,9 +14,9 @@ class Config:
 
     _raw_url = os.environ.get(
         "DATABASE_URL",
-        f"postgresql://{os.environ.get('DB_USER', 'postgres')}:{os.environ.get('DB_PASSWORD', '')}@{os.environ.get('DB_HOST', 'localhost')}:{os.environ.get('DB_PORT', '5432')}/{os.environ.get('DB_NAME', 'study_tracker')}"
+        f"mysql+pymysql://{os.environ.get('DB_USER', 'root')}:{os.environ.get('DB_PASSWORD', '')}@{os.environ.get('DB_HOST', 'localhost')}:{os.environ.get('DB_PORT', '3306')}/{os.environ.get('DB_NAME', 'study_tracker')}"
     )
-    SQLALCHEMY_DATABASE_URI = _raw_url.replace("postgres://", "postgresql://", 1)
+    SQLALCHEMY_DATABASE_URI = _raw_url
 
     logger.info("Database URI: %s", SQLALCHEMY_DATABASE_URI)
 

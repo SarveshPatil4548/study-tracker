@@ -15,6 +15,7 @@
 <!-- Form Card -->
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-gray-900/20 p-4 sm:p-6 hover:shadow-lg transition-all duration-200 mt-6 anim-slide-up">
     <form method="POST" class="space-y-5" onsubmit="handleFormSubmit(this)">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center gap-1.5">
